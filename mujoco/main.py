@@ -4,8 +4,8 @@ import numpy as np
 import pinocchio as pin
 import time
 
-urdf_path = "C:\\Users\\srkia\\OneDrive\\Documents\\GitHub\\xArmForceControl\\mujoco\\xarm7\\xarm7.urdf" 
-xml_path = "C:\\Users\\srkia\\OneDrive\\Documents\\GitHub\\xArmForceControl\\mujoco\\xarm7\\scene.xml"
+urdf_path = "./mujoco/xarm7/xarm7.urdf" 
+xml_path = "./mujoco/xarm7/scene.xml"
 
 pin_model = pin.buildModelFromUrdf(urdf_path)
 pin_data = pin_model.createData()
