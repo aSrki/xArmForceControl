@@ -74,13 +74,12 @@
                     <joint name="joint7" class="size3" />
                     <geom material="gray" mesh="end_tool" />
                     <site name="attachment_site" />
-                    <!-- <body name="ft_sensor" pos="0 0 0">
+                    <body name="ft_sensor" pos="0 0 0">
                       <geom type="cylinder" size="0.04 0.015" rgba="0.0 0.5 0.5 1" />
-                      <site name="ft_sensor_site" pos="0 0 0.015" size="0.01" rgba="1 0 0 1" />
-
+                      <site name="ft_sensor_site" pos="0 0 0" size="0.01" rgba="1 0 0 1" />
                       <body name="gripper_base" pos="0 0 0.03">
                       </body>
-                    </body> -->
+                    </body>
                   </body>
                 </body>
               </body>
@@ -104,10 +103,10 @@
   <keyframe>
     <key name="home" qpos="0 -.247 0 .909 0 1.15644 0" ctrl="0 -.247 0 .909 0 1.15644 0" />
   </keyframe>
-<!-- 
+
   <sensor>
     <force name="external_force_sensor" site="ft_sensor_site"/>
     <torque name="external_torque_sensor" site="ft_sensor_site"/>
-  </sensor> -->
+  </sensor>
 
 </mujoco>

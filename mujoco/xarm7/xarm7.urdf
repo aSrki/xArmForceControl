@@ -209,4 +209,20 @@
         <dynamics damping="2" friction="1" />
     </joint>
 
+    <joint name="ft_sensor_joint" type="fixed">
+        <parent link="link7"/>
+        <child link="ft_sensor_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
+    </joint>
+
+    <link name="ft_sensor_link">
+    <inertial>
+        <mass value="0.445"/> <origin xyz="0 0 0.02"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+    <visual>
+        <geometry><mesh filename="assets/FTSensor.stl"/></geometry>
+    </visual>
+    </link>
+
 </robot>

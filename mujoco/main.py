@@ -6,8 +6,8 @@ import time
 import matplotlib.pyplot as plt
 
 fig = plt.figure()
-ax = plt.axes(projection='3d')
-
+ax1 = fig.add_subplot(1, 2, 1, projection='3d')
+ax2 = fig.add_subplot(1, 2, 2)
 urdf_path = "./mujoco/xarm7/xarm7.urdf" 
 xml_path = "./mujoco/xarm7/scene.xml"
 
@@ -40,7 +40,7 @@ def solve_ik(target_pose):
 mj_model = mujoco.MjModel.from_xml_path(xml_path)
 mj_data = mujoco.MjData(mj_model)
 
-body_id = mujoco.mj_name2id(mj_model, mujoco.mjtObj.mjOBJ_BODY, "link7")
+body_id = mujoco.mj_name2id(mj_model, mujoco.mjtObj.mjOBJ_BODY, "gripper_base")
 
 target_pose = pin.SE3.Identity()
 target_pose.translation = np.array([0.4, 0.1, 0.0])
@@ -50,7 +50,7 @@ pin_model.gravity.linear = np.array([0, 0, -9.81])
 
 target_pos = np.array([0.3, 0.3, 0.5])
 
-target_rot = pin.utils.rpyToMatrix(3.14, 0, 0) 
+target_rot = pin.utils.rpyToMatrix(np.pi, 0, 0) 
 
 target_pose = pin.SE3(target_rot, target_pos)
 
@@ -66,6 +66,11 @@ print(f"QDES = {q_des}")
 x = []
 y = []
 z = []
+
+force = []
+
+sensor_id = mujoco.mj_name2id(mj_model, mujoco.mjtObj.mjOBJ_SENSOR, "external_force_sensor")
+adr = mj_model.sensor_adr[sensor_id]
 
 with mujoco.viewer.launch_passive(mj_model, mj_data) as viewer:
     time.sleep(1)
@@ -85,7 +90,6 @@ with mujoco.viewer.launch_passive(mj_model, mj_data) as viewer:
             x.append(p_curr[0])
             y.append(p_curr[1])
             z.append(p_curr[2])
-
             R_curr = pin_data.oMf[JOINT_ID].rotation
 
             J = pin.computeFrameJacobian(pin_model, pin_data, q, JOINT_ID, pin.ReferenceFrame.LOCAL_WORLD_ALIGNED)
@@ -107,7 +111,6 @@ with mujoco.viewer.launch_passive(mj_model, mj_data) as viewer:
             tau = J.T @ F_ext + tau_dyn
 
             mj_data.qfrc_applied[:7] = tau
-            
             mj_model.opt.disableflags |= mujoco.mjtDisableBit.mjDSBL_ACTUATION
 
             mujoco.mj_step(mj_model, mj_data)
@@ -118,9 +121,12 @@ with mujoco.viewer.launch_passive(mj_model, mj_data) as viewer:
             time.sleep(sleep)
 
             if(4 > time.time() - sim_start > 3):
-                force_vector = np.array([50, 0, 0, 0, 0, 0])
+                force_vector = np.array([0, 0, 50, 0, 0, 0])
                 mj_data.xfrc_applied[body_id] = force_vector
+                measured_force = mj_data.sensordata[adr : adr+3]
+                force.append(measured_force[2])
 
     except KeyboardInterrupt:
-        ax.plot3D(x,y,z)
+        ax1.plot3D(x,y,z)
+        ax2.plot(force)
         plt.show()
